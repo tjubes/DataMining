@@ -11,9 +11,31 @@ def bestsplit(x,y):
   np.sort(np.unique(x))
 
 df = pd.read_csv('credit.txt').to_numpy()
+df2 = pd.read_csv('pima indians.txt', header=None).to_numpy()
 
-x = df[:,3]
-y = df[:,5]           
+x = df2[:, 0:8]
+y = df2[:, 8]
+
+
+def bestsplit(x,y):
+  impurity_parent = impurity(y)
+  
+  x_sorted = np.sort(np.unique(x))
+  x_splitpoints = (x_sorted[0:(len(x_sorted)-1)]+x_sorted[1:(len(x_sorted))])/2
+  
+  reductions = []
+  for s in x_splitpoints:
+    left = impurity(y[x <= s])
+    l = len(y[x <= s])
+    right = impurity(y[x > s])
+    r = len(y[x > s])
+    reduction = impurity_parent - ((l*left) + r*(right))
+    reductions.append(reduction)
+
+  best_splitpoint = x_splitpoints[reductions.index(max(reductions))]
+
+  return best_splitpoint
+  
 
 
 # x == data matrix (2-dimens.) contain the attribute values
